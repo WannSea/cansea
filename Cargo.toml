@@ -1,0 +1,14 @@
+[package]
+name = "cansea"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+
+[build-dependencies]
+dbc-codegen = { git = "https://github.com/technocreatives/dbc-codegen", version = "0.3.0" }
+
+[dependencies]
+bitvec = { version = "1.0", default-features = false }
+embedded-can = "0.4.1"
+
