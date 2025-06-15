@@ -306,15 +306,15 @@ pub struct ImuAccelerometer {
 impl ImuAccelerometer {
     pub const MESSAGE_ID: embedded_can::Id = Id::Extended(unsafe { ExtendedId::new_unchecked(0x802)});
     
-    pub const IMU_ACCELERATION_X_MIN: i16 = -40_i16;
-    pub const IMU_ACCELERATION_X_MAX: i16 = 40_i16;
-    pub const IMU_ACCELERATION_Y_MIN: i16 = -40_i16;
-    pub const IMU_ACCELERATION_Y_MAX: i16 = 40_i16;
-    pub const IMU_ACCELERATION_Z_MIN: i16 = -40_i16;
-    pub const IMU_ACCELERATION_Z_MAX: i16 = 40_i16;
+    pub const IMU_ACCELERATION_X_MIN: f32 = -50_f32;
+    pub const IMU_ACCELERATION_X_MAX: f32 = 50_f32;
+    pub const IMU_ACCELERATION_Y_MIN: f32 = -50_f32;
+    pub const IMU_ACCELERATION_Y_MAX: f32 = 50_f32;
+    pub const IMU_ACCELERATION_Z_MIN: f32 = -50_f32;
+    pub const IMU_ACCELERATION_Z_MAX: f32 = 50_f32;
     
     /// Construct new IMU_ACCELEROMETER from values
-    pub fn new(imu_acceleration_x: i16, imu_acceleration_y: i16, imu_acceleration_z: i16) -> Result<Self, CanError> {
+    pub fn new(imu_acceleration_x: f32, imu_acceleration_y: f32, imu_acceleration_z: f32) -> Result<Self, CanError> {
         let mut res = Self { raw: [0u8; 8] };
         res.set_imu_acceleration_x(imu_acceleration_x)?;
         res.set_imu_acceleration_y(imu_acceleration_y)?;
@@ -329,12 +329,12 @@ impl ImuAccelerometer {
     
     /// IMU_ACCELERATION_X
     ///
-    /// - Min: -40
-    /// - Max: 40
+    /// - Min: -50
+    /// - Max: 50
     /// - Unit: ""
     /// - Receivers: PI
     #[inline(always)]
-    pub fn imu_acceleration_x(&self) -> i16 {
+    pub fn imu_acceleration_x(&self) -> f32 {
         self.imu_acceleration_x_raw()
     }
     
@@ -342,29 +342,28 @@ impl ImuAccelerometer {
     ///
     /// - Start bit: 1
     /// - Signal size: 16 bits
-    /// - Factor: 1
+    /// - Factor: 0.001
     /// - Offset: 0
     /// - Byte order: BigEndian
     /// - Value type: Signed
     #[inline(always)]
-    pub fn imu_acceleration_x_raw(&self) -> i16 {
+    pub fn imu_acceleration_x_raw(&self) -> f32 {
         let signal = self.raw.view_bits::<Msb0>()[6..22].load_be::<i16>();
         
-        let factor = 1;
-        let signal = signal as i16;
-        i16::from(signal).saturating_mul(factor).saturating_add(0)
+        let factor = 0.001_f32;
+        let offset = 0_f32;
+        (signal as f32) * factor + offset
     }
     
     /// Set value of IMU_ACCELERATION_X
     #[inline(always)]
-    pub fn set_imu_acceleration_x(&mut self, value: i16) -> Result<(), CanError> {
-        if value < -40_i16 || 40_i16 < value {
+    pub fn set_imu_acceleration_x(&mut self, value: f32) -> Result<(), CanError> {
+        if value < -50_f32 || 50_f32 < value {
             return Err(CanError::ParameterOutOfRange { message_id: ImuAccelerometer::MESSAGE_ID });
         }
-        let factor = 1;
-        let value = value.checked_sub(0)
-            .ok_or(CanError::ParameterOutOfRange { message_id: ImuAccelerometer::MESSAGE_ID })?;
-        let value = (value / factor) as i16;
+        let factor = 0.001_f32;
+        let offset = 0_f32;
+        let value = ((value - offset) / factor) as i16;
         
         let value = u16::from_ne_bytes(value.to_ne_bytes());
         self.raw.view_bits_mut::<Msb0>()[6..22].store_be(value);
@@ -373,12 +372,12 @@ impl ImuAccelerometer {
     
     /// IMU_ACCELERATION_Y
     ///
-    /// - Min: -40
-    /// - Max: 40
+    /// - Min: -50
+    /// - Max: 50
     /// - Unit: ""
     /// - Receivers: PI
     #[inline(always)]
-    pub fn imu_acceleration_y(&self) -> i16 {
+    pub fn imu_acceleration_y(&self) -> f32 {
         self.imu_acceleration_y_raw()
     }
     
@@ -386,29 +385,28 @@ impl ImuAccelerometer {
     ///
     /// - Start bit: 17
     /// - Signal size: 16 bits
-    /// - Factor: 1
+    /// - Factor: 0.001
     /// - Offset: 0
     /// - Byte order: BigEndian
     /// - Value type: Signed
     #[inline(always)]
-    pub fn imu_acceleration_y_raw(&self) -> i16 {
+    pub fn imu_acceleration_y_raw(&self) -> f32 {
         let signal = self.raw.view_bits::<Msb0>()[22..38].load_be::<i16>();
         
-        let factor = 1;
-        let signal = signal as i16;
-        i16::from(signal).saturating_mul(factor).saturating_add(0)
+        let factor = 0.001_f32;
+        let offset = 0_f32;
+        (signal as f32) * factor + offset
     }
     
     /// Set value of IMU_ACCELERATION_Y
     #[inline(always)]
-    pub fn set_imu_acceleration_y(&mut self, value: i16) -> Result<(), CanError> {
-        if value < -40_i16 || 40_i16 < value {
+    pub fn set_imu_acceleration_y(&mut self, value: f32) -> Result<(), CanError> {
+        if value < -50_f32 || 50_f32 < value {
             return Err(CanError::ParameterOutOfRange { message_id: ImuAccelerometer::MESSAGE_ID });
         }
-        let factor = 1;
-        let value = value.checked_sub(0)
-            .ok_or(CanError::ParameterOutOfRange { message_id: ImuAccelerometer::MESSAGE_ID })?;
-        let value = (value / factor) as i16;
+        let factor = 0.001_f32;
+        let offset = 0_f32;
+        let value = ((value - offset) / factor) as i16;
         
         let value = u16::from_ne_bytes(value.to_ne_bytes());
         self.raw.view_bits_mut::<Msb0>()[22..38].store_be(value);
@@ -417,12 +415,12 @@ impl ImuAccelerometer {
     
     /// IMU_ACCELERATION_Z
     ///
-    /// - Min: -40
-    /// - Max: 40
+    /// - Min: -50
+    /// - Max: 50
     /// - Unit: ""
     /// - Receivers: PI
     #[inline(always)]
-    pub fn imu_acceleration_z(&self) -> i16 {
+    pub fn imu_acceleration_z(&self) -> f32 {
         self.imu_acceleration_z_raw()
     }
     
@@ -430,29 +428,28 @@ impl ImuAccelerometer {
     ///
     /// - Start bit: 33
     /// - Signal size: 16 bits
-    /// - Factor: 1
+    /// - Factor: 0.001
     /// - Offset: 0
     /// - Byte order: BigEndian
     /// - Value type: Signed
     #[inline(always)]
-    pub fn imu_acceleration_z_raw(&self) -> i16 {
+    pub fn imu_acceleration_z_raw(&self) -> f32 {
         let signal = self.raw.view_bits::<Msb0>()[38..54].load_be::<i16>();
         
-        let factor = 1;
-        let signal = signal as i16;
-        i16::from(signal).saturating_mul(factor).saturating_add(0)
+        let factor = 0.001_f32;
+        let offset = 0_f32;
+        (signal as f32) * factor + offset
     }
     
     /// Set value of IMU_ACCELERATION_Z
     #[inline(always)]
-    pub fn set_imu_acceleration_z(&mut self, value: i16) -> Result<(), CanError> {
-        if value < -40_i16 || 40_i16 < value {
+    pub fn set_imu_acceleration_z(&mut self, value: f32) -> Result<(), CanError> {
+        if value < -50_f32 || 50_f32 < value {
             return Err(CanError::ParameterOutOfRange { message_id: ImuAccelerometer::MESSAGE_ID });
         }
-        let factor = 1;
-        let value = value.checked_sub(0)
-            .ok_or(CanError::ParameterOutOfRange { message_id: ImuAccelerometer::MESSAGE_ID })?;
-        let value = (value / factor) as i16;
+        let factor = 0.001_f32;
+        let offset = 0_f32;
+        let value = ((value - offset) / factor) as i16;
         
         let value = u16::from_ne_bytes(value.to_ne_bytes());
         self.raw.view_bits_mut::<Msb0>()[38..54].store_be(value);
@@ -523,15 +520,15 @@ pub struct ImuGyro {
 impl ImuGyro {
     pub const MESSAGE_ID: embedded_can::Id = Id::Extended(unsafe { ExtendedId::new_unchecked(0x803)});
     
-    pub const IMU_GYRO_ROLL_MIN: i16 = -250_i16;
-    pub const IMU_GYRO_ROLL_MAX: i16 = 250_i16;
-    pub const IMU_GYRO_PITCH_MIN: i16 = -250_i16;
-    pub const IMU_GYRO_PITCH_MAX: i16 = 250_i16;
-    pub const IMU_GYRO_YAW_MIN: i16 = -250_i16;
-    pub const IMU_GYRO_YAW_MAX: i16 = 250_i16;
+    pub const IMU_GYRO_ROLL_MIN: f32 = -250_f32;
+    pub const IMU_GYRO_ROLL_MAX: f32 = 250_f32;
+    pub const IMU_GYRO_PITCH_MIN: f32 = -250_f32;
+    pub const IMU_GYRO_PITCH_MAX: f32 = 250_f32;
+    pub const IMU_GYRO_YAW_MIN: f32 = -250_f32;
+    pub const IMU_GYRO_YAW_MAX: f32 = 250_f32;
     
     /// Construct new IMU_GYRO from values
-    pub fn new(imu_gyro_roll: i16, imu_gyro_pitch: i16, imu_gyro_yaw: i16) -> Result<Self, CanError> {
+    pub fn new(imu_gyro_roll: f32, imu_gyro_pitch: f32, imu_gyro_yaw: f32) -> Result<Self, CanError> {
         let mut res = Self { raw: [0u8; 8] };
         res.set_imu_gyro_roll(imu_gyro_roll)?;
         res.set_imu_gyro_pitch(imu_gyro_pitch)?;
@@ -551,7 +548,7 @@ impl ImuGyro {
     /// - Unit: ""
     /// - Receivers: PI
     #[inline(always)]
-    pub fn imu_gyro_roll(&self) -> i16 {
+    pub fn imu_gyro_roll(&self) -> f32 {
         self.imu_gyro_roll_raw()
     }
     
@@ -559,29 +556,28 @@ impl ImuGyro {
     ///
     /// - Start bit: 1
     /// - Signal size: 16 bits
-    /// - Factor: 1
+    /// - Factor: 0.001
     /// - Offset: 0
     /// - Byte order: BigEndian
     /// - Value type: Signed
     #[inline(always)]
-    pub fn imu_gyro_roll_raw(&self) -> i16 {
+    pub fn imu_gyro_roll_raw(&self) -> f32 {
         let signal = self.raw.view_bits::<Msb0>()[6..22].load_be::<i16>();
         
-        let factor = 1;
-        let signal = signal as i16;
-        i16::from(signal).saturating_mul(factor).saturating_add(0)
+        let factor = 0.001_f32;
+        let offset = 0_f32;
+        (signal as f32) * factor + offset
     }
     
     /// Set value of IMU_GYRO_ROLL
     #[inline(always)]
-    pub fn set_imu_gyro_roll(&mut self, value: i16) -> Result<(), CanError> {
-        if value < -250_i16 || 250_i16 < value {
+    pub fn set_imu_gyro_roll(&mut self, value: f32) -> Result<(), CanError> {
+        if value < -250_f32 || 250_f32 < value {
             return Err(CanError::ParameterOutOfRange { message_id: ImuGyro::MESSAGE_ID });
         }
-        let factor = 1;
-        let value = value.checked_sub(0)
-            .ok_or(CanError::ParameterOutOfRange { message_id: ImuGyro::MESSAGE_ID })?;
-        let value = (value / factor) as i16;
+        let factor = 0.001_f32;
+        let offset = 0_f32;
+        let value = ((value - offset) / factor) as i16;
         
         let value = u16::from_ne_bytes(value.to_ne_bytes());
         self.raw.view_bits_mut::<Msb0>()[6..22].store_be(value);
@@ -595,7 +591,7 @@ impl ImuGyro {
     /// - Unit: ""
     /// - Receivers: PI
     #[inline(always)]
-    pub fn imu_gyro_pitch(&self) -> i16 {
+    pub fn imu_gyro_pitch(&self) -> f32 {
         self.imu_gyro_pitch_raw()
     }
     
@@ -603,29 +599,28 @@ impl ImuGyro {
     ///
     /// - Start bit: 17
     /// - Signal size: 16 bits
-    /// - Factor: 1
+    /// - Factor: 0.001
     /// - Offset: 0
     /// - Byte order: BigEndian
     /// - Value type: Signed
     #[inline(always)]
-    pub fn imu_gyro_pitch_raw(&self) -> i16 {
+    pub fn imu_gyro_pitch_raw(&self) -> f32 {
         let signal = self.raw.view_bits::<Msb0>()[22..38].load_be::<i16>();
         
-        let factor = 1;
-        let signal = signal as i16;
-        i16::from(signal).saturating_mul(factor).saturating_add(0)
+        let factor = 0.001_f32;
+        let offset = 0_f32;
+        (signal as f32) * factor + offset
     }
     
     /// Set value of IMU_GYRO_PITCH
     #[inline(always)]
-    pub fn set_imu_gyro_pitch(&mut self, value: i16) -> Result<(), CanError> {
-        if value < -250_i16 || 250_i16 < value {
+    pub fn set_imu_gyro_pitch(&mut self, value: f32) -> Result<(), CanError> {
+        if value < -250_f32 || 250_f32 < value {
             return Err(CanError::ParameterOutOfRange { message_id: ImuGyro::MESSAGE_ID });
         }
-        let factor = 1;
-        let value = value.checked_sub(0)
-            .ok_or(CanError::ParameterOutOfRange { message_id: ImuGyro::MESSAGE_ID })?;
-        let value = (value / factor) as i16;
+        let factor = 0.001_f32;
+        let offset = 0_f32;
+        let value = ((value - offset) / factor) as i16;
         
         let value = u16::from_ne_bytes(value.to_ne_bytes());
         self.raw.view_bits_mut::<Msb0>()[22..38].store_be(value);
@@ -639,7 +634,7 @@ impl ImuGyro {
     /// - Unit: ""
     /// - Receivers: PI
     #[inline(always)]
-    pub fn imu_gyro_yaw(&self) -> i16 {
+    pub fn imu_gyro_yaw(&self) -> f32 {
         self.imu_gyro_yaw_raw()
     }
     
@@ -647,29 +642,28 @@ impl ImuGyro {
     ///
     /// - Start bit: 33
     /// - Signal size: 16 bits
-    /// - Factor: 1
+    /// - Factor: 0.001
     /// - Offset: 0
     /// - Byte order: BigEndian
     /// - Value type: Signed
     #[inline(always)]
-    pub fn imu_gyro_yaw_raw(&self) -> i16 {
+    pub fn imu_gyro_yaw_raw(&self) -> f32 {
         let signal = self.raw.view_bits::<Msb0>()[38..54].load_be::<i16>();
         
-        let factor = 1;
-        let signal = signal as i16;
-        i16::from(signal).saturating_mul(factor).saturating_add(0)
+        let factor = 0.001_f32;
+        let offset = 0_f32;
+        (signal as f32) * factor + offset
     }
     
     /// Set value of IMU_GYRO_YAW
     #[inline(always)]
-    pub fn set_imu_gyro_yaw(&mut self, value: i16) -> Result<(), CanError> {
-        if value < -250_i16 || 250_i16 < value {
+    pub fn set_imu_gyro_yaw(&mut self, value: f32) -> Result<(), CanError> {
+        if value < -250_f32 || 250_f32 < value {
             return Err(CanError::ParameterOutOfRange { message_id: ImuGyro::MESSAGE_ID });
         }
-        let factor = 1;
-        let value = value.checked_sub(0)
-            .ok_or(CanError::ParameterOutOfRange { message_id: ImuGyro::MESSAGE_ID })?;
-        let value = (value / factor) as i16;
+        let factor = 0.001_f32;
+        let offset = 0_f32;
+        let value = ((value - offset) / factor) as i16;
         
         let value = u16::from_ne_bytes(value.to_ne_bytes());
         self.raw.view_bits_mut::<Msb0>()[38..54].store_be(value);
