@@ -30,6 +30,8 @@ pub enum Messages {
     Pmu(Pmu),
     /// AFT_SONAR
     AftSonar(AftSonar),
+    /// IMU_TEMP
+    ImuTemp(ImuTemp),
 }
 
 impl Messages {
@@ -45,6 +47,7 @@ impl Messages {
             MpptStats::MESSAGE_ID => Messages::MpptStats(MpptStats::try_from(payload)?),
             Pmu::MESSAGE_ID => Messages::Pmu(Pmu::try_from(payload)?),
             AftSonar::MESSAGE_ID => Messages::AftSonar(AftSonar::try_from(payload)?),
+            ImuTemp::MESSAGE_ID => Messages::ImuTemp(ImuTemp::try_from(payload)?),
             id => return Err(CanError::UnknownMessageId(id)),
         };
         Ok(res)
@@ -1140,6 +1143,127 @@ impl core::convert::TryFrom<&[u8]> for AftSonar {
 }
 
 impl embedded_can::Frame for AftSonar {
+    fn new(id: impl Into<Id>, data: &[u8]) -> Option<Self> {
+        if id.into() != Self::MESSAGE_ID {
+            None
+        } else {
+            data.try_into().ok()
+        }
+    }
+
+    fn new_remote(_id: impl Into<Id>, _dlc: usize) -> Option<Self> {
+        unimplemented!()
+    }
+
+    fn is_extended(&self) -> bool {
+        match self.id() {
+            Id::Standard(_) => false,
+            Id::Extended(_) => true,
+        }
+    }
+
+    fn is_remote_frame(&self) -> bool {
+        false
+    }
+
+    fn id(&self) -> Id {
+        Self::MESSAGE_ID
+    }
+
+    fn dlc(&self) -> usize {
+        self.raw.len()
+    }
+
+    fn data(&self) -> &[u8] {
+        &self.raw
+    }
+}
+
+/// IMU_TEMP
+///
+/// - Extended ID: 2052 (0x804)
+/// - Size: 8 bytes
+/// - Transmitter: SENSOR_MODULE
+#[derive(Clone, Copy)]
+pub struct ImuTemp {
+    raw: [u8; 8],
+}
+
+impl ImuTemp {
+    pub const MESSAGE_ID: embedded_can::Id = Id::Extended(unsafe { ExtendedId::new_unchecked(0x804)});
+    
+    pub const IMU_TEMPERATURE_MIN: f32 = -30_f32;
+    pub const IMU_TEMPERATURE_MAX: f32 = 100_f32;
+    
+    /// Construct new IMU_TEMP from values
+    pub fn new(imu_temperature: f32) -> Result<Self, CanError> {
+        let mut res = Self { raw: [0u8; 8] };
+        res.set_imu_temperature(imu_temperature)?;
+        Ok(res)
+    }
+    
+    /// Access message payload raw value
+    pub fn raw(&self) -> &[u8; 8] {
+        &self.raw
+    }
+    
+    /// IMU_TEMPERATURE
+    ///
+    /// - Min: -30
+    /// - Max: 100
+    /// - Unit: "C"
+    /// - Receivers: PI
+    #[inline(always)]
+    pub fn imu_temperature(&self) -> f32 {
+        self.imu_temperature_raw()
+    }
+    
+    /// Get raw value of IMU_TEMPERATURE
+    ///
+    /// - Start bit: 1
+    /// - Signal size: 16 bits
+    /// - Factor: 0.01
+    /// - Offset: 0
+    /// - Byte order: BigEndian
+    /// - Value type: Unsigned
+    #[inline(always)]
+    pub fn imu_temperature_raw(&self) -> f32 {
+        let signal = self.raw.view_bits::<Msb0>()[6..22].load_be::<u16>();
+        
+        let factor = 0.01_f32;
+        let offset = 0_f32;
+        (signal as f32) * factor + offset
+    }
+    
+    /// Set value of IMU_TEMPERATURE
+    #[inline(always)]
+    pub fn set_imu_temperature(&mut self, value: f32) -> Result<(), CanError> {
+        if value < -30_f32 || 100_f32 < value {
+            return Err(CanError::ParameterOutOfRange { message_id: ImuTemp::MESSAGE_ID });
+        }
+        let factor = 0.01_f32;
+        let offset = 0_f32;
+        let value = ((value - offset) / factor) as u16;
+        
+        self.raw.view_bits_mut::<Msb0>()[6..22].store_be(value);
+        Ok(())
+    }
+    
+}
+
+impl core::convert::TryFrom<&[u8]> for ImuTemp {
+    type Error = CanError;
+    
+    #[inline(always)]
+    fn try_from(payload: &[u8]) -> Result<Self, Self::Error> {
+        if payload.len() != 8 { return Err(CanError::InvalidPayloadSize); }
+        let mut raw = [0u8; 8];
+        raw.copy_from_slice(&payload[..8]);
+        Ok(Self { raw })
+    }
+}
+
+impl embedded_can::Frame for ImuTemp {
     fn new(id: impl Into<Id>, data: &[u8]) -> Option<Self> {
         if id.into() != Self::MESSAGE_ID {
             None
