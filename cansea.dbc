@@ -85,7 +85,7 @@ BO_ 2147487254 VESC_Status2_V1: 8 VESC
    SG_ Status_AmpHoursCharged_V1 : 39|32@0- (1e-05,0) [-21474.8|21474.8] "Ah" PI
    SG_ Status_AmpHours_V1 : 7|32@0- (1e-05,0) [-21474.8|21474.8] "Ah" PI
 
-BO_ 2147485953 VESC_Status1_V1: 8 VESC
+BO_ 2147485974 VESC_Status1_V1: 8 VESC
    SG_ Status_RPM_V1 : 7|32@0- (1,0) [-2.14748e+09|2.14748e+09] "RPM" PI
    SG_ Status_TotalCurrent_V1 : 39|16@0- (0.1,0) [-3276.8|3276.7] "A" PI
    SG_ Status_DutyCycle_V1 : 55|16@0- (0.1,0) [-100|100] "%" PI
@@ -93,7 +93,7 @@ BO_ 2147485953 VESC_Status1_V1: 8 VESC
 BO_ 2147483649 VESC_Command_DutyCycle_V1: 4 PI
    SG_ Command_DutyCycle_V1 : 7|32@0- (0.001,0) [-100|100] "%" VESC
 
-CM_ BO_ 2147485953 "vesc some how uses id 1 here";
+CM_ BO_ 2147485974 "vesc somehow send 901 aswell";
 BA_DEF_ BO_ "GenMsgBackgroundColor" STRING ;
 BA_DEF_ BO_ "GenMsgForegroundColor" STRING ;
 BA_DEF_ BO_ "matchingcriteria" INT 0 0;
@@ -114,4 +114,4 @@ BA_ "GenMsgForegroundColor" BO_ 22 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 2147490582 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 2147487766 "#000000";
 BA_ "GenMsgForegroundColor" BO_ 2147487254 "#000000";
-BA_ "GenMsgForegroundColor" BO_ 2147485953 "#000000";
+BA_ "GenMsgForegroundColor" BO_ 2147485974 "#000000";
