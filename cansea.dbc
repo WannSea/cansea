@@ -56,9 +56,6 @@ BO_ 2147486208 MPPT_STATS: 8 E_BOX
 
 BO_ 2147486210 PMU: 8 E_BOX
    SG_ PMU_TEMP : 1|16@0- (0.01,0) [-100|100] "C" PI
-   SG_ Status_RPM_V1 : 7|32@0- (1,0) [-2.14748e+09|2.14748e+09] "RPM" PI
-   SG_ Status_TotalCurrent_V1 : 39|16@0- (0.1,0) [-3276.8|3276.7] "A" PI
-   SG_ Status_DutyCycle_V1 : 55|16@0- (0.1,0) [-100|100] "%" PI
 
 BO_ 2147486209 AFT_SONAR: 8 E_BOX
    SG_ AFT_SONAR_HEIGHT : 1|16@0+ (1,0) [0|6000] "mm" PI
@@ -89,6 +86,9 @@ BO_ 2147487254 VESC_Status2_V1: 8 VESC
    SG_ Status_AmpHours_V1 : 7|32@0- (1e-05,0) [-21474.8|21474.8] "Ah" PI
 
 BO_ 2147485974 VESC_Status1_V1: 8 VESC
+   SG_ Status_RPM_V1 : 7|32@0- (1,0) [-2.14748e+09|2.14748e+09] "RPM" PI
+   SG_ Status_TotalCurrent_V1 : 39|16@0- (0.1,0) [-3276.8|3276.7] "A" PI
+   SG_ Status_DutyCycle_V1 : 55|16@0- (0.1,0) [-100|100] "%" PI
 
 BO_ 2147483649 VESC_Command_DutyCycle_V1: 4 PI
    SG_ Command_DutyCycle_V1 : 7|32@0- (0.001,0) [-100|100] "%" VESC
