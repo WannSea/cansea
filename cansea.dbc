@@ -66,6 +66,33 @@ BO_ 2147485700 IMU_TEMP: 8 SENSOR_MODULE
 BO_ 22 SETDUTY: 4 Throttle
    SG_ SET_DUTY_signed : 7|32@0- (0.001,0) [-100|100] "" Throttle
 
+BO_ 2147490561 VESC_Status5_V1: 8 VESC
+   SG_ Status_Tachometer_V1 : 39|32@0- (1,0) [0|0] "RPM" PI
+   SG_ Status_Reserved_V1 : 23|16@0- (1,0) [0|0] "" PI
+   SG_ Status_InputVoltage_V1 : 7|16@0- (0.1,0) [0|0] "" PI
+
+BO_ 2147487745 VESC_Status4_V1: 8 VESC
+   SG_ Staus_MotorTemp_V1 : 23|16@0- (0.1,0) [-3276.8|3276.7] "C" PI
+   SG_ Staus_MosfetTemp_V1 : 7|16@0- (0.1,0) [-3276.8|3276.7] "C" PI
+   SG_ Status_TotalInputCurrent_V1 : 39|16@0- (0.1,0) [-3276.8|3276.7] "A" PI
+   SG_ Status_PIDPos_V1 : 55|16@0- (0.02,0) [-655.36|655.34] "" PI
+
+BO_ 2147487489 VESC_Status3_V1: 8 VESC
+   SG_ Status_WattHoursCharged_V1 : 39|32@0- (1e-05,0) [-21474.8|21474.8] "Wh" PI
+   SG_ Status_WattHours_V1 : 7|32@0- (1e-05,0) [-21474.8|21474.8] "Wh" PI
+
+BO_ 2147487233 VESC_Status2_V1: 8 VESC
+   SG_ Status_AmpHoursCharged_V1 : 39|32@0- (1e-05,0) [-21474.8|21474.8] "Ah" PI
+   SG_ Status_AmpHours_V1 : 7|32@0- (1e-05,0) [-21474.8|21474.8] "Ah" PI
+
+BO_ 2147485953 VESC_Status1_V1: 8 VESC
+   SG_ Status_RPM_V1 : 7|32@0- (1,0) [-2.14748e+09|2.14748e+09] "RPM" PI
+   SG_ Status_TotalCurrent_V1 : 39|16@0- (0.1,0) [-3276.8|3276.7] "A" PI
+   SG_ Status_DutyCycle_V1 : 55|16@0- (0.1,0) [-100|100] "%" PI
+
+BO_ 2147483649 VESC_Command_DutyCycle_V1: 4 PI
+   SG_ Command_DutyCycle_V1 : 7|32@0- (0.001,0) [-100|100] "%" VESC
+
 BA_DEF_ BO_ "GenMsgBackgroundColor" STRING ;
 BA_DEF_ BO_ "GenMsgForegroundColor" STRING ;
 BA_DEF_ BO_ "matchingcriteria" INT 0 0;
