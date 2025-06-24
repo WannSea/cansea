@@ -1,1 +1,1 @@
-candump can0 | python -m cantools decode cansea.dbc
+candump can0 | .venv/bin/python -m cantools decode cansea.dbc
